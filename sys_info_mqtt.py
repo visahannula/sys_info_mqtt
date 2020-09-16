@@ -56,7 +56,6 @@ def print_topics(topics: dict):
 class ConfigException(Exception):
     def __init__(self, msg):
         self.msg = msg
-        print(f'Configuration error. {msg}')
 
 
 # Publish
@@ -71,8 +70,8 @@ def pub_to_broker(topics):
 def main(argv=[]):
     if len(argv) > 1 and argv[1] == '--help':
         print(f'Usage: {sys.argv[0]} [--topics]\n',
-                f'   Without argument publish to broker.\n',
-                f'   With argument only show topics (or --help).')
+              f'   Without argument publish to broker.\n',
+              f'   With argument only show topics (or --help).')
         return 0
 
     topics = create_topics(get_system_info(), start_str=f'{main_topic}')
@@ -86,8 +85,11 @@ def main(argv=[]):
     # no arguments will publish
     else:
         print('Publishing to broker.')
-        pub_to_broker(topics)
-        return 0
+        try:
+            pub_to_broker(topics)
+            return 0
+        except ConfigException as err:
+            print(f'Configuration error. {err}')
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

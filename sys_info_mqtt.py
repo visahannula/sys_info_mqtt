@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 # This is a simple MQTT client publishing some system
 # information to a broker. Uses Paho MQTT.
+#
+# Set environment var MQTT_BROKER as broker hostname or ip
+#
 # By: Visa Hannula
 
 import json

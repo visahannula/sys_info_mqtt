@@ -33,7 +33,7 @@ def get_system_info(
         loadavg: Tuple[float, float, float]) -> Dict:
 
     loadavg = list(loadavg)
-    cpu_count = 1 if cpu_count == None else cpu_count
+    cpu_count = 1 if cpu_count == None or cpu_count < 1 else cpu_count
 
     # Add percentage values using core count
     loadavg.extend([v / cpu_count * 100 for v in loadavg])
@@ -96,6 +96,7 @@ def main(argv=[]):
             return 0
         except ConfigException as err:
             print(f'Configuration error. {err}')
+
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))

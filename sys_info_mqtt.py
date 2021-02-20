@@ -8,6 +8,7 @@ import os
 import socket
 import sys
 from sys import argv
+from typing import Dict, Optional, Tuple
 
 import paho.mqtt.publish as publish
 
@@ -25,12 +26,15 @@ def create_topics(info_dict: dict, start_str = '', topics=[]) -> list:
             topics.append({ 'topic':f'{curr_str}/{k}', 'payload': v })
     return topics
 
+"""Get system info as dict. Calculates loadavg as percentage."""
+def get_system_info(
+        local_hostname: str,
+        cpu_count: Optional[int],
+        loadavg: Tuple[float, float, float]) -> Dict:
 
-def get_system_info():
-    local_hostname = socket.gethostname()
-    cpu_count = os.cpu_count()
-    loadavg = list(os.getloadavg())
-    
+    loadavg = list(loadavg)
+    cpu_count = 1 if cpu_count == None else cpu_count
+
     # Add percentage values using core count
     loadavg.extend([v / cpu_count * 100 for v in loadavg])
     loadavg_keys = ['loadavg1', 'loadavg5', 'loadavg15', 
@@ -74,7 +78,9 @@ def main(argv=[]):
               f'   With argument only show topics (or --help).')
         return 0
 
-    topics = create_topics(get_system_info(), start_str=f'{main_topic}')
+    topics = create_topics(
+        get_system_info(socket.gethostname(), os.cpu_count(), os.getloadavg()),
+        start_str=f'{main_topic}')
 
     # any other argument will just print topics and values
     if len(argv) > 1 and not argv[1] == None:

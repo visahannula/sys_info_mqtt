@@ -69,7 +69,7 @@ class ConfigException(Exception):
 # Publish
 def pub_to_broker(topics):
     if not MQTT_BROKER_HOST:
-        raise ConfigException('MQTT_BROKER_HOST not defined.')
+        raise ConfigException('MQTT_BROKER not defined.')
 
     try:
         publish.multiple(topics, hostname=MQTT_BROKER_HOST, port=1883, 

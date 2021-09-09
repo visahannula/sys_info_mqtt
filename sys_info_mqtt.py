@@ -63,6 +63,7 @@ def print_topics(topics: dict):
 class ConfigException(Exception):
     def __init__(self, msg):
         self.msg = msg
+        print(f'Configuration error: {self.msg}')
 
 
 # Publish
@@ -70,8 +71,12 @@ def pub_to_broker(topics):
     if not MQTT_BROKER_HOST:
         raise ConfigException('MQTT_BROKER_HOST not defined.')
 
-    publish.multiple(topics, hostname=MQTT_BROKER_HOST, port=1883, 
-                     keepalive=60, will=None, auth=None, tls=None)
+    try:
+        publish.multiple(topics, hostname=MQTT_BROKER_HOST, port=1883, 
+                        keepalive=60, will=None, auth=None, tls=None)
+    except OSError as os_err:
+        print(f'OS Error: {os_err}')
+        raise
 
 
 def main(argv=[]):
@@ -97,8 +102,8 @@ def main(argv=[]):
         try:
             pub_to_broker(topics)
             return 0
-        except ConfigException as err:
-            print(f'Configuration error. {err}')
+        except (ConfigException, OSError):
+            print(f'Could not publish.')
 
 
 if __name__ == '__main__':
